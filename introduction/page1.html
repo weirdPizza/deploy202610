@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABOUT ME</title>
+    <style>
+        *{
+            margin: 0px;
+            padding: 0px;
+        }
+        #container{
+            width: 1200px;
+            height: 1300px;
+            margin: 100px auto;
+            background-color: beige;
+        }
+        nav {
+            width:6%; 
+            /* 나머지 94퍼 */
+            height: 100%;
+            background-color: aqua;
+            float: left;
+        }
+        aside{
+            width: 32%;
+            height: 100%;
+            background-color: gainsboro;
+            float: left;
+        }
+        #main {
+            width: 62%;
+            height : 100%;
+            background-color: lightcyan;
+            float: left;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <nav>
+            <ul>
+                <li>FOMAL</li>
+                <li>CASUAL</li>
+                <li>GUESTBOOK</li>
+            </ul>
+        </nav>
+        <aside>
+            <img src="./profile_mouse.png" alt="프로필 쥐사진" width=200px>
+            <div id="nameCard">
+                <h1>Lee Eunjoo<h1>
+                <div id="detailTitle">
+                    <div>date if birth</div>
+                    <div>tel</div>
+                    <div>email</div>
+                </div>
+                <div id="detailContext">
+                    <div>2000.05.21</div>
+                    <div>010-1111-2222</div>
+                    <div>atvet@naver.com</div>
+                </div>
+                <a href="#">SNS</a>
+            </div>
+        </aside>
+
+        <div id="main">
+            <h1 class="title">ABOUT ME</h1>
+
+            <!-- SELF-INTRODUCTION -->
+            <section>
+                <div>
+                    <h2 class="subTitle">SELF-INTRODUCTION</h2> 
+                    <div class="moreBtn">↓</button>
+                </div>
+                <p><mark>프로그래밍</mark>에 관심이 많습니다. <br>현재 열심히 공부하며 코딩 중!</p>  
+            </section>
+
+            <!-- EXPERIENCE -->
+            <section>
+                <div>
+                    <h2 class="subTitle">EXPERIENCE</h2> 
+                    <div class="moreBtn">↓</button>
+                </div>
+
+                <ul>
+                    <li>프론트엔드
+                        <ul>
+                            <li>HTML/CSS/JAVASCRIPT </li>
+                            <li>웹 페이지 잘 만든다 </li>
+                            <li>다 잘함</li> 
+                        </ul>
+                    </li>
+                    <li>백엔드
+                        <ul>
+                            <li>자바 잘함 </li>
+                            <li>오라클 더 잘함</li>
+                        </ul>                        
+                    </li>
+                </ul>        
+            </section>
+            
+            <!-- TOOLS -->
+            <section>
+                <div>
+                    <h2 class="subtitle">보유 기술</h2>
+                    <li style="list-style: none;">
+                </div>
+ 
+                    <ul>
+                        <li>자바 </li>
+                        <li>오라클</li>
+                    </ul>                        
+                </li> 
+            </section>
+
+            <!-- EDUCATION -->
+            <section>
+                <div>
+                    <h2 class="subtitle">Education</h2>
+                    <div class="moreBtn">↓</button>
+                </div>
+                <table>
+                  <caption>학력 사항</caption>
+                  <thead>
+                      <tr>
+                          <th>출신학교</th>
+                          <th>전공</th>
+                          <th>기간</th>
+                          <th>구분</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      <tr>
+                          <td>좋은대학교</td>
+                          <td>좋은학과</td>
+                          <td>2010.3 ~ 2013.2</td>
+                          <td>졸업</td>
+                      </tr>
+                      <tr>
+                          <td>꽤좋은고등학교</td>
+                          <td> - </td>
+                          <td>2007.3 ~ 2009.2</td>
+                          <td>졸업</td>
+                      </tr>
+                  </tbody>
+                </table>
+            </section>
+
+            <!-- CERTIFICATIONS -->
+            <section>
+                <div>
+                    <h2 class="subtitle">CERTIFICATIONS</h2>
+                    <div class="moreBtn">↓</button>
+                </div>
+            </section>
+        </div>
+    </div>
+</body>
+</html>
