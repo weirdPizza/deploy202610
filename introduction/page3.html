@@ -30,10 +30,13 @@
         }
         #container{
             width: 980px;
-            height: auto;
             margin: 100px auto;
-            overflow: visible;
             padding-bottom: 50px;
+        }
+        #container::after{
+            content: "";
+            display: block;
+            clear: both;
         }
         nav { 
             width:6%; 
@@ -103,7 +106,6 @@
             box-shadow: 20px 20px 0px #DFDFDF;
             z-index: 50;
             position: relative;
-
         }  
         
 
@@ -111,7 +113,7 @@
 
         #main {
             width: 100%;
-            min-height : auto;
+            min-height : 800px;
             box-sizing: border-box;
             margin: 10px 0;
         }
@@ -120,7 +122,7 @@
             text-align: right;
             margin-bottom: 12px; 
         }
-        #main #guestContent{
+        #main #guestContainer{
             width: 100%;
             border: 1px solid #333;
             background-color: #eee;
@@ -278,7 +280,7 @@
             <div id="main">
                 
                 <!-- GUESTBOOK CONTENTS -->
-                <section id="guestContent">
+                <section id="guestContainer">
                     <div class="guestBox">
                         <div class="guestTitle">
                             <div>
@@ -286,7 +288,7 @@
                                 <span class="guestName">김나리</span>
                                 <span class="guestDate">2024/12/28</span>
                             </div>
-                            <div class="guestDel"><a href="#">☒</a></div>
+                            <div class="guestDel" onclick="fnGuestDel(event)"><a href="javascript:;">☒</a></div>
                         </div>
                         <div class="guestContent">
                             이 편지는 영국에서 최초로 시작되어 일년에 한바퀴를 돌면 서 받는 사람에게 행운을 주었고
@@ -303,7 +305,7 @@
                                 <span class="guestName">좋은하루보내세요</span>
                                 <span class="guestDate">2024/12/25</span>
                             </div>
-                            <div class="guestDel"><a href="#">☒</a></div>
+                            <div class="guestDel"  onclick="fnGuestDel(event)"><a href="javascript:;">☒</a></div>
                         </div>
                         <div class="guestContent">
                             잘 들렸다 갑니다.
@@ -317,11 +319,11 @@
                                 <span class="guestName">별이맘</span>
                                 <span class="guestDate">2024/12/24</span>
                             </div>
-                            <div class="guestDel"><a href="#">☒</a></div>
+                            <div class="guestDel" onclick="fnGuestDel(event)"><a href="javascript:;">☒</a></div>
                         </div>
                         <div class="guestContent">
                             안녕하세요. 좋은 정보 감사합니다 ^^. <br>
-                            제 블로그도.  방문해주세요.<br>
+                            제 블로그에 놀러오세요~<br>
                             blog.com/atvet1234567<br>
                             @->----
                         </div>
@@ -356,25 +358,29 @@
     function fnRegister(){
         let name = document.querySelector(".inputName").value;
         let content = document.querySelector(".inputContent").value;
+        let guestContainer = document.querySelector("#guestContainer");
 
-        let guestContent = document.querySelector("#guestContent");
+        let datetime = new Date();
+        let year = datetime.getFullYear();
+        let month = datetime.getMonth() < 10 ? "0" + datetime.getMonth() : datetime.getMonth();
+        let day = datetime.getDay() < 10 ? "0" + datetime.getDay() : datetime.getDay();
+        let date = year + "/" + month + "/" + day;
 
         // 이름이 20글자 이내여야 함, 이름 공백안됨, 내용 공백안됨 
         if(name.length <= 20 && name.length != 0 && content.length != 0){
-            guestContent.insertAdjacentHTML("afterbegin",  "<div class='guestBox'>"+
+            guestContainer.insertAdjacentHTML("afterbegin",  "<div class='guestBox'>"+
                             "<div class='guestTitle'>"+
                                 "<div>"+
                                     "<span class='guestNo'>#000</span>"+
                                     "<span class='guestName'>"+name+"</span>"+
-                                    "<span class='guestDate'>0000/00/00</span>"+
-                                    // TEST!! 날짜 다루는 거 배우면 현재 날짜로 수정해야됨
+                                    "<span class='guestDate'>"+date+"</span>"+
                                 "</div>"+
-                                "<div class='guestDel'><a href='#'>☒</a></div>"+
+                                "<div class='guestDel'  onclick='fnGuestDel(event)''><a href='#'>☒</a></div>"+
                             "</div>"+
                             "<div class='guestContent'>"+
                                 content+
                             "</div>"+
-                        "</div>");
+                        "</div>");            
             // 초기화
             document.querySelector(".inputName").value="";
             document.querySelector(".inputContent").value="";
@@ -385,9 +391,16 @@
             alert("이름을 1글자 이상 입력해주세요.")
         }else{
             alert("내용을 1글자 이상 입력해주세요.");
-        }
+        }    
+    }
 
+    function fnGuestDel(e){
+        // 클릭된 버튼을 기준으로 가장 가까운 .guestBox 요소를 찾음
+        let guestContainer = document.querySelector("#guestContainer");
+        let guestBox = e.target.closest(".guestBox");
+        guestContainer.removeChild(guestBox);
         
     }
+
 </script>
 
