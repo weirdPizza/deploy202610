@@ -10,7 +10,7 @@
             padding: 0px;
             color : #333;
             font-family: 'Roboto';
-            /* box-sizing: border-box; */
+            /* box-sizing: border-box; */      
         }
         html {
             /* 스크롤바 크기 무시하고 양쪽 여백 같게 */
@@ -221,9 +221,14 @@
             line-height: 28px;
             margin-bottom: 24px;
             display: none;
+            transition: transform 1s ease;
+            
+
         }
         #main .sectionContent.active{
             display: block;
+            transform: translateY(0px);
+            
         }
 
 
@@ -272,6 +277,8 @@
         .bar {
             width: 0px;
             height: 100%;
+            /* 그라데이션 지원하지 않는 브라우저용 background */
+            background:#c6deff; 
             background: linear-gradient(90deg, #DBEDF1, #c6deff); 
             /* 그라데이션 효과 */
             color: #333;
@@ -372,7 +379,6 @@
                 transform: translateX(0);
             }
             100% {
-                /* 1세트가 완전히 지나간 시점 (-50%)에 처음으로 순간이동 */
                 transform: translateX(-30%); 
             }
         }
@@ -382,13 +388,17 @@
         #clock{
             position: fixed;
             background-image: url(./clock.png);
+            background-size: cover;
             width: 228px;
             height: 108px;
             bottom: 120px;
             right: 200px;
             z-index: 150;
-            font-size: 30px;
-            display: none;
+            font-size: 24px;
+            text-align: center;
+            line-height: 108px;
+            cursor: pointer;
+            user-select: none;
         }
 
 
@@ -584,13 +594,13 @@
             </div>
         </div>
     </div>
-    <div id="clock">배우면 넣어 시계 ☒</div>
+    <div id="clock"> </div>
 </body>
 </html>
 <script>
 
-
-    const toggleSections = document.querySelectorAll('.sectionTitle');
+    
+    let toggleSections = document.querySelectorAll('.sectionTitle');
 
     toggleSections.forEach(sectionTitle => {
         sectionTitle.addEventListener('click', (e) => {
@@ -604,6 +614,7 @@
             if(section.querySelector('.moreBtn').classList.toggle('active')){
                 section.querySelector('.moreBtn').style.rotate = "90deg"; 
                 section.querySelector('.moreBtn').style.transformOrigin = "center"; 
+                // sectionContent.style.
             }else{
                 section.querySelector('.moreBtn').style.rotate = "0deg"; 
                 section.querySelector('.moreBtn').style.transformOrigin = "center"; 
@@ -611,7 +622,69 @@
         });
     });
     
+
+
+
+    // 시계 드래그로 원하는 위치에 둘 수 있음.
+    let dragItem = document.querySelector("#clock");
+    let container = document.body;
+
+    let active = false; // 드래그 하고 있는지 상태
+    let initialX; // 드래그 시작 시 X
+    let initialY; // 드래그 시작 시 Y
+    let xOffset = 0; // X로 이동한 총 거리
+    let yOffset = 0; // Y로 이동한 총 거리
+
+    container.addEventListener("mousedown", dragStart);
+    container.addEventListener("mouseup", dragEnd);
+    container.addEventListener("mousemove", drag);
+
+    // 드래그 막 시작할 때 함수
+    function dragStart(e) {
+        initialX = e.clientX - xOffset;
+        initialY = e.clientY - yOffset;
+        // 사람이 드래그한 요소가 내가 움직이게 하고 싶은 요소와 같으면
+      if (e.target == dragItem) {
+        // 드래그 상태 true
+        active = true;
+      }
+    }
+
+    function drag(e) {
+        // 드래그하고 있으면
+        if (active) {
+            // 화면 스크롤 같은 동작 방지해준다고 함
+            e.preventDefault();
+            // clientX : 브라우저의 기준점(0,0)부터 마우스포인터의 가로(X축) 픽셀거리
+            xOffset = e.clientX - initialX;
+            // 마우스포인터 가로 거리에서 드래그 시작 위치를 빼면 이동거리가 나옴
+            yOffset = e.clientY - initialY;
+
+            // 이동거리를 매번 시계의 위치값에 업데이트 시켜줌
+            dragItem.style.transform = "translate(" + xOffset + "px, " + yOffset + "px)";
+        }
+    }
+    function dragEnd(e) {
+      active = false;
+      // 드래그 끝났으니 false 상태
+    }
+
+
+    let clock = document.querySelector("#clock");
+    // 시계 시간 넣음
+    setInterval(function(){  
+        let datetime = new Date();
+        let hour = datetime.getHours() < 10 ? "0" + datetime.getHours() : datetime.getHours();
+        let minute = datetime.getMinutes() < 10 ? "0" + datetime.getMinutes() : datetime.getMinutes();
+        let second = datetime.getSeconds() < 10 ? "0" + datetime.getSeconds() : datetime.getSeconds();
+        
+        let time = hour + ":"+minute+":"+second+"<span onclick='fnClockDel()'> ☒</span>"; 
+        clock.innerHTML = time;
+    },1000);
+
+    // 시계 X 누르면 사라지게
+    function fnClockDel(){
+        clock.remove();
+    }
 </script>
-<!-- 
-transform-origin: center; 
-            rotate: 180deg -->
+

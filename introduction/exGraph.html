@@ -1,129 +1,118 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-        /* 전체 감싸는 컨테이너 */
-        .graph-wrapper {
-            max-width: 500px;
-            margin: 0 auto;
-            font-family: sans-serif;
-        }
-
-        /* 개별 항목 (이름 + 그래프 바) */
-        .graph-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px; /* 항목 간 간격 */
-        }
-
-        /* 항목 이름 스타일 */
-        .label {
-            width: 100px; /* 이름 영역 너비 고정 */
-            font-size: 14px;
-            font-weight: bold;
-            color: #333;
-        }
-
-        /* 회색 배경 바 */
-        .bar-container {
-            flex: 1; /* 남은 공간을 모두 차지 */
-            height: 24px;
-            background-color: #e9ecef;
-            /* overflow: hidden; */
-            position: relative;
-        }
-
-        /* 색상이 채워지는 실질적인 그래프 바 */
-        .bar {
-            width: 0px;
-            height: 100%;
-            background: linear-gradient(90deg, #c6deff, #abc9ff); /* 그라데이션 효과 */
-            color: #333;
-            font-size: 11px;
-            font-weight: bold;
-            text-align: right;
-            line-height: 24px;
-            padding-right: 10px;
-            box-sizing: border-box;
-            /* border-radius: 12px; */
-            transition: width 0.8s cubic-bezier(0.1, 0.8, 0.25, 1); /* 부드러운 애니메이션 */
-            position: relative;
-        }
-        .bar span {
-            display: none;
-        }
-        .bar:hover span{
-            display: inline-block;
-            position: absolute;
-            top: 0;
-            left: 104%;
-            width: 48px;
-            height: 100%;
-            /* padding: 0 5px 0 10px; */
-            padding-left: 12px;
-            text-align: center;
-            background-image: url(./graphTag.png);
-            background-size: cover;
-            box-sizing: border-box;
-            
-
-            -webkit-border-radius: 0 2px 2px 0;
-            -moz-border-radius: 0 2px 2px 0;
-                -ms-border-radius: 0 2px 2px 0;
-                    border-radius: 0 2px 2px 0;
-        }
-
-        .clip-box {
-            width: 68px;
-            height: 300px;
-            background-color: #e74c3c;
-            /* x y 좌표: 좌상, 우상, 우하, 좌하 순서 */
-            clip-path: polygon(20% 0%, 100% 0%, 80% 100%, 0% 100%);
-            clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 76% );
-        }
-    </style>
+  <meta name="viewport" 
+        content="width=device-width, 
+        initial-scale=1.0, 
+        user-scalable=no" />
+  <title>Drag/Drop/Bounce</title>
+  <style>
+    #container {
+      width: 100%;
+      height: 400px;
+      background-color: #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      /* overflow: hidden; */
+      border-radius: 7px;
+      touch-action: none;
+    }
+    #item {
+      width: 100px;
+      height: 100px;
+      background-color: rgb(245, 230, 99);
+      border: 10px solid rgba(136, 136, 136, .5);
+      border-radius: 50%;
+      touch-action: none;
+      user-select: none;
+    }
+    #item:active {
+      background-color: rgba(168, 218, 220, 1.00);
+    }
+    #item:hover {
+      cursor: pointer;
+      border-width: 20px;
+    }
+  </style>
 </head>
+
 <body>
-    <div class="graph-wrapper">
-        <div class="graph-item">
-            <div class="label">자바</div>
-            <div class="bar-container">
-                <div class="bar" style="width: 65%;"><span>65%</span></div>
-            </div>
-        </div>
 
-        <div class="graph-item">
-            <div class="label">오라클</div>
-            <div class="bar-container">
-                <div class="bar" style="width: 75%;"><span>75%</span></div>
-            </div>
-        </div>
+  <div id="outerContainer">
+    <div id="container">
+      <div id="item">
 
-        <div class="graph-item">
-            <div class="label">HTML/CSS</div>
-            <div class="bar-container">
-                <div class="bar" style="width: 85%;"><span>85%</span></div>
-            </div>
-        </div>
-
-        <div class="graph-item">
-            <div class="label">illustrator</div>
-            <div class="bar-container">
-                <div class="bar" style="width: 90%;"><span>90%</span></div>
-            </div>
-        </div>
-
-        <div class="graph-item">
-            <div class="label">피그마</div>
-            <div class="bar-container">
-                <div class="bar" style="width: 80%;"><span>80%</span></div>
-            </div>
-        </div>
+      </div>
     </div>
-    <div class="clip-box"></div>
-    
+  </div>
+
+  <script>
+    var dragItem = document.querySelector("#item");
+    var container = document.body;
+
+    var active = false;
+    var currentX;
+    var currentY;
+    var initialX;
+    var initialY;
+    var xOffset = 0;
+    var yOffset = 0;
+
+    container.addEventListener("touchstart", dragStart, false);
+    container.addEventListener("touchend", dragEnd, false);
+    container.addEventListener("touchmove", drag, false);
+
+    container.addEventListener("mousedown", dragStart, false);
+    container.addEventListener("mouseup", dragEnd, false);
+    container.addEventListener("mousemove", drag, false);
+
+    function dragStart(e) {
+      if (e.type === "touchstart") {
+        initialX = e.touches[0].clientX - xOffset;
+        initialY = e.touches[0].clientY - yOffset;
+      } else {
+        initialX = e.clientX - xOffset;
+        initialY = e.clientY - yOffset;
+      }
+
+      if (e.target === dragItem) {
+        active = true;
+      }
+    }
+
+    function dragEnd(e) {
+      initialX = currentX;
+      initialY = currentY;
+
+      active = false;
+    }
+
+    function drag(e) {
+      if (active) {
+      
+        e.preventDefault();
+      
+        if (e.type === "touchmove") {
+          currentX = e.touches[0].clientX - initialX;
+          currentY = e.touches[0].clientY - initialY;
+        } else {
+          currentX = e.clientX - initialX;
+          currentY = e.clientY - initialY;
+        }
+
+        xOffset = currentX;
+        yOffset = currentY;
+
+        setTranslate(currentX, currentY, dragItem);
+      }
+    }
+
+    function setTranslate(xPos, yPos, el) {
+      el.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
+    }
+  </script>
 </body>
+
 </html>
