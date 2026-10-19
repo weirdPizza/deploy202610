@@ -203,7 +203,8 @@
                             </label>
                             <label>
                                 <div>내용</div>
-                                <textarea class="inputContent" v-model="inputContent" @keyup.enter="fnRegister"></textarea>
+                                <textarea class="inputContent" v-model="inputContent" @keyup.enter.exact="fnRegister"></textarea>
+                                <!-- shift+enter일 땐 엔터 먹히게 설정 -->
                             </label>
                         </div>
                         <!-- 굳이 div로 안묶어도 되지 않을까? css 적용하고 생각하기 -->
