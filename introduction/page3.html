@@ -3,124 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ABOUT ME</title>
+    <title>GUESTBOOK</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link rel="stylesheet" href="styles.css">
     <style>
-        *{
-            margin: 0px;
-            padding: 0px;
-            color : #333;
-            font-family: 'Roboto';
-        }
-        html {
-            overflow-y: scroll;
-        }
-        a {text-decoration: none;}
-        .btn {
-            border: none;
-            text-indent: -9999px;
-            cursor: pointer;
-            overflow: hidden;
-            white-space: nowrap;
-            width: 32px;
-            height: 32px;
-            float: left;
-            background-size: cover;
-            background-color: #E3F6D9;
-            border: none;
-        }
-        #container{
-            width: 980px;
-            margin: 100px auto;
-            padding-bottom: 50px;
-        }
-        #container::after{
-            content: "";
-            display: block;
-            clear: both;
-        }
-        nav { 
-            width:6%; 
-            /* 나머지 94퍼 */
-            float: left;
-        }
-        nav ul a{
-            display: inline-block;
-            width: 64px;
-            height: 272px;
-            position:relative;
-            left:-3px;
-            list-style: none;
-        }
-        nav ul a li{
-            height: 70%;
-            font-size: 26px;
-            writing-mode: vertical-rl;
-            transform: rotate(180deg);
-            line-height: 64px;
-            padding: 32px 0;
-            float:left;
-            text-align: right;
-            box-sizing: border-box;
-        }
-        nav ul a:last-child li{
-            padding: 16px 0;
-        }
-        nav ul a img{
-            float:left;
-            margin: 0 16px;
-            width: 36px;
-            background-image: url(./Star\ border.png);
-            border: none;
-            background-size: cover;
-        }
-        /* .starBtn.active {
-            background-image: url(./Star\ rate.png);
-        } */
-        nav ul::after{
-            content: "";
-            display: block;
-            clear: both;
-        }
         nav ul a:first-child{
-            background-image: url(./menu1.png);
             z-index: 1;
         }
         nav ul a:nth-child(2){
-            background-image: url(./menu2.png);
-            top: -30px;
             z-index: 10;
         }
         nav ul a:last-child{
-            background-image: url(./menu3.png);
-            top: -60px;
             z-index: 100;
         }
         #page {
-            width: 94%;
-            height: auto;
-            float: left;
-            box-sizing: border-box;
             padding: 30px;
             background-color: #DBEDF1;
-            border: 1px solid #333;
-            box-shadow: 20px 20px 0px #DFDFDF;
-            z-index: 50;
-            position: relative;
         }  
         
-
-
-
         #main {
             width: 100%;
             min-height : 800px;
-            box-sizing: border-box;
             margin: 10px 0;
-        }
-        h1{
-            font-size: 64px;
-            text-align: right;
-            margin-bottom: 12px; 
         }
         #main #guestContainer{
             width: 100%;
@@ -130,11 +35,9 @@
             font-weight: 300;
             height: 500px;
             overflow-y: auto;
-            box-sizing: border-box;
             display: flex;
             flex-direction: column;
 
-            
         }
         .guestBox{
             border: 1px solid #333;
@@ -145,7 +48,6 @@
             line-height: 40px;
             background-color: lemonchiffon;
             padding: 0 10px;
-            box-sizing: border-box;
         }
         .guestTitle > div {
             float:left;
@@ -175,6 +77,7 @@
         .guestContent {
             background-color: white;
             padding: 12px;
+            white-space: pre-line
         }
 
         /* GUEST INPUT */
@@ -210,14 +113,12 @@
             height: 100%;
             border:1px solid #333;
             border-right: none;
-            box-sizing: border-box;
             font-size: 20px;
         }
         label:last-child div{
             line-height: 120px;
         }
         input[type="text"], textarea{
-            box-sizing: border-box;
             width: 84%;
             height: 100%;
             padding: 10px;
@@ -231,180 +132,193 @@
         input[type="submit"] {
             width: 112px;
             height: 60px;
-            background-image: url(./registerBtn.png) ;
-            background-size: contain;
-            background-position: center;
-            background-color: #DBEDF1;
+            background: #DBEDF1 url(./registerBtn.png) center / contain;
             border: none;
-            box-sizing: border-box;
             padding-bottom: 12px;
             font-size: 20px;
             font-weight: 500;
-            cursor: pointer;
-            
+            cursor: pointer;            
         }
-        /* .registerBtn {
-            background-image: url(./registerBtn.png);
-            background-size: cover;
-            width: 80px;
-            height: 42px;
-        } */
+
+
     </style>
 </head>
 <body>
-    <div id="container">
-        <nav>
-            <ul>
-                <a href="./page1.html">
-                    <li>FOMAL</li>
-                    <img src="Star border.png" alt="별모양 사진">
-                </a>
-                <!-- <li>
-                    <a href="./page1.html">FOMAL</a>
-                    <button class="starBtn btn" onclick="fnToggleStar()">별</button>
-                </li> -->
-                <a href="./page2.html">
-                    <li>CASUAL</li>
-                    <img src="Star border.png" alt="별모양 사진">
-                </a>
-                <!-- <li><a href="./page2.html">CASUAL</a></li> -->
-                <a href="./page3.html">
-                    <li>GUESTBOOK</li>
-                    <img src="Star rate.png" alt="현재 페이지 표시, 별모양 사진">
-                </a>
-                <!-- <li><a href="./page3.html">GUESTBOOK</a></li> -->
-            </ul>
-        </nav>
-        <div id="page">
-                <!-- 여기 안에 aside랑 main 넣어야 border가 이쁘게 나올 거 같음 -->
-            <h1>GUESTBOOK</h1>
-            <div id="main">
-                
-                <!-- GUESTBOOK CONTENTS -->
-                <section id="guestContainer">
-                    <div class="guestBox">
-                        <div class="guestTitle">
-                            <div>
-                                <span class="guestNo">#3</span>
-                                <span class="guestName">김나리</span>
-                                <span class="guestDate">2024/12/28</span>
-                            </div>
-                            <div class="guestDel" onclick="fnGuestDel(event)"><a href="javascript:;">☒</a></div>
-                        </div>
-                        <div class="guestContent">
-                            이 편지는 영국에서 최초로 시작되어 일년에 한바퀴를 돌면 서 받는 사람에게 행운을 주었고
-                            지금은 당신에게로 옮겨진 이 편지는 4일 안에 당신 곁을 떠나야 합니다. 이 편지를 포함해서
-                            7통을 행운이 필요한 사람에게 보내 주셔야 합니다. 복사를 해도 좋습니다. 혹 미신이라 하실지
-                            모르지만 사실입니다.
-                        </div>
-                    </div>
+    <div id="app">
+        <!-- html. 반드시 id가 app인 태그 안에서 작업 -->
+        <!-- (script 맨 하단 app.mount('#app'); 여기 아이디와 같아야 함) -->
 
-                    <div class="guestBox">
-                        <div class="guestTitle">
-                            <div>
-                                <span class="guestNo">#2</span>
-                                <span class="guestName">좋은하루보내세요</span>
-                                <span class="guestDate">2024/12/25</span>
-                            </div>
-                            <div class="guestDel"  onclick="fnGuestDel(event)"><a href="javascript:;">☒</a></div>
-                        </div>
-                        <div class="guestContent">
-                            잘 들렸다 갑니다.
-                        </div>
-                    </div>
-
-                    <div class="guestBox">
-                        <div class="guestTitle">
-                            <div>
-                                <span class="guestNo">#1</span>
-                                <span class="guestName">별이맘</span>
-                                <span class="guestDate">2024/12/24</span>
-                            </div>
-                            <div class="guestDel" onclick="fnGuestDel(event)"><a href="javascript:;">☒</a></div>
-                        </div>
-                        <div class="guestContent">
-                            안녕하세요. 좋은 정보 감사합니다 ^^. <br>
-                            제 블로그에 놀러오세요~<br>
-                            blog.com/atvet1234567<br>
-                            @->----
-                        </div>
-                    </div>
-                </section>
-
-                <!-- GUESTBOOK INPUT -->
-                <section>
-                    <div>
-                        <label>
-                            <div>이름</div>
-                            <input class="inputName" type="text" autofocus>
-                        </label>
-                        <label>
-                            <div>내용</div>
-                            <textarea class="inputContent" name="" id=""></textarea>
-                        </label>
-                    </div>
-                    <!-- 굳이 div로 안묶어도 되지 않을까? css 적용하고 생각하기 -->
-                    <div>
-                        <input type="submit" value="등록" onclick="fnRegister()">
-                    </div>
+        <div id="container">
+            <nav>
+                <ul>
+                    <a href="./page1.html">
+                        <li>FOMAL</li>
+                        <img src="Star border.png" alt="별모양 사진">
+                    </a>
+                    <!-- <li>
+                        <a href="./page1.html">FOMAL</a>
+                        <button class="starBtn btn" onclick="fnToggleStar()">별</button>
+                    </li> -->
+                    <a href="./page2.html">
+                        <li>CASUAL</li>
+                        <img src="Star border.png" alt="별모양 사진">
+                    </a>
+                    <!-- <li><a href="./page2.html">CASUAL</a></li> -->
+                    <a href="./page3.html">
+                        <li>GUESTBOOK</li>
+                        <img src="Star rate.png" alt="현재 페이지 표시, 별모양 사진">
+                    </a>
+                    <!-- <li><a href="./page3.html">GUESTBOOK</a></li> -->
+                </ul>
+            </nav>
+            <div id="page">
+                    <!-- 여기 안에 aside랑 main 넣어야 border가 이쁘게 나올 거 같음 -->
+                <h1>GUESTBOOK</h1>
+                <div id="main">
                     
-                </section>
+                    <!-- GUESTBOOK CONTENTS -->
+                    <section id="guestContainer">
+
+                        <div class="guestBox" v-for="item in list">
+                            <div class="guestTitle">
+                                <div>
+                                    <span class="guestNo">#{{item.NUM}}</span>
+                                    <span class="guestName">{{item.NAME}}</span>
+                                    <span class="guestDate">{{item.DATE}}</span>
+                                </div>
+                                <div class="guestDel" @click="fnGuestDel(item.NUM)"><a href="javascript:;">☒</a></div>
+                            </div>
+                            <div class="guestContent">
+                                {{item.CONTENT}}
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- GUESTBOOK INPUT -->
+                    <section>
+                        <div>
+                            <label>
+                                <div>이름</div>
+                                <input class="inputName" type="text" autofocus v-model="inputName">
+                            </label>
+                            <label>
+                                <div>내용</div>
+                                <textarea class="inputContent" v-model="inputContent" @keyup.enter="fnRegister"></textarea>
+                            </label>
+                        </div>
+                        <!-- 굳이 div로 안묶어도 되지 않을까? css 적용하고 생각하기 -->
+                        <div>
+                            <input type="submit" value="등록" @click="fnRegister">
+                        </div>
+                        
+                    </section>
+                </div>
             </div>
         </div>
     </div>
+
 </body>
 </html>
 <script>
+    const app = Vue.createApp({ // createApp함수는 인자로 맵을 받음
+        data() {
+            return {
+                // 변수 - (key : value) <맵형태
+                list:[
+                    {
+                        NUM:3,
+                        NAME:"김나리",
+                        DATE: "2024/12/28",
+                        CONTENT:"이 편지는 영국에서 최초로 시작되어 일년에 한바퀴를 돌면 서 받는 사람에게 행운을 주었고"+
+                                "지금은 당신에게로 옮겨진 이 편지는 4일 안에 당신 곁을 떠나야 합니다. 이 편지를 포함해서"+
+                                "7통을 행운이 필요한 사람에게 보내 주셔야 합니다. 복사를 해도 좋습니다. 혹 미신이라 하실지"+
+                                "모르지만 사실입니다."
+                    },
+                    {
+                        NUM:2,
+                        NAME:"좋은하루보내세요",
+                        DATE:"2024/12/25",
+                        CONTENT:"잘 들렸다 갑니다."
+                    },
+                    {
+                        NUM:1,
+                        NAME: "별이맘",
+                        DATE: "2024/12/24",
+                        CONTENT:  "안녕하세요. 좋은 정보 감사합니다 ^^.\n"+
+                                "제 블로그에 놀러오세요~\n"+
+                                "blog.com/atvet1234567\n"+
+                                "@->----"
+                    }
+                ],
+                inputName : "",
+                inputContent: ""
+            };
+        },
+        methods: {
+            // 함수(메소드) - (key : function())
+            fnTest: function () {
+                let self = this;
+                $.ajax({
+                    url: "",
+                    dataType: "json",
+                    type: "GET",
+                    data: {},
+                    success: function (data) {
 
-    function fnRegister(){
-        let name = document.querySelector(".inputName").value;
-        let content = document.querySelector(".inputContent").value;
-        let guestContainer = document.querySelector("#guestContainer");
+                    }
+                });
+            },
+            fnRegister: function(){
+                let self = this;
+                // 이름이 20글자 이내여야 함, 이름 공백안됨, 내용 공백안됨 
+                if(self.inputName.length<=20 && self.inputName !="" && self.inputContent!=""){
+                    let datetime = new Date();
+                    let year = datetime.getFullYear();
+                    let month = datetime.getMonth()+1 < 10 ? "0" + datetime.getMonth()+1 : datetime.getMonth()+1;
+                    let date = datetime.getDate() < 10 ? "0" + datetime.getDate() : datetime.getDate();
+                    let fullDate = year + "/" + month + "/" + date;
+                    
+                    self.list.unshift({NUM:self.list.length+1, NAME: self.inputName, DATE: fullDate, CONTENT:self.inputContent});
 
-        let datetime = new Date();
-        let year = datetime.getFullYear();
-        let month = datetime.getMonth() < 10 ? "0" + datetime.getMonth() : datetime.getMonth();
-        let day = datetime.getDay() < 10 ? "0" + datetime.getDay() : datetime.getDay();
-        let date = year + "/" + month + "/" + day;
+                    alert("등록되었습니다.");
 
-        // 이름이 20글자 이내여야 함, 이름 공백안됨, 내용 공백안됨 
-        if(name.length <= 20 && name.length != 0 && content.length != 0){
-            guestContainer.insertAdjacentHTML("afterbegin",  "<div class='guestBox'>"+
-                            "<div class='guestTitle'>"+
-                                "<div>"+
-                                    "<span class='guestNo'>#000</span>"+
-                                    "<span class='guestName'>"+name+"</span>"+
-                                    "<span class='guestDate'>"+date+"</span>"+
-                                "</div>"+
-                                "<div class='guestDel'  onclick='fnGuestDel(event)''><a href='#'>☒</a></div>"+
-                            "</div>"+
-                            "<div class='guestContent'>"+
-                                content+
-                            "</div>"+
-                        "</div>");            
-            // 초기화
-            document.querySelector(".inputName").value="";
-            document.querySelector(".inputContent").value="";
-            alert("등록되었습니다.");
-        }else if(name.length>20){
-            alert("이름은 20글자 이내여야 합니다.");
-        }else if(name.length===0){
-            alert("이름을 1글자 이상 입력해주세요.")
-        }else{
-            alert("내용을 1글자 이상 입력해주세요.");
-        }    
-    }
+                    //초기화
+                    self.inputName="";
+                    self.inputContent="";
+                    return;
+                }
+                if(self.inputName.length>20){
+                    alert("이름은 20글자 이내여야 합니다.");
+                    return;
+                }
+                if(self.inputName==""){
+                    alert("이름을 1글자 이상 입력해주세요.");
+                    return;
+                }
+                if(self.inputContent==""){
+                    alert("내용을 1글자 이상 입력해주세요.");
+                }
 
-    function fnGuestDel(e){
-        // 클릭된 버튼을 기준으로 가장 가까운 .guestBox 요소를 찾음
-        if(!confirm("정말 삭제하시겠습니까?")){
-            reutrn;
+            },
+
+            fnGuestDel: function(num){
+                let self = this;
+                if(!confirm("정말 삭제하시겠습니까?")){
+                    return;
+                }
+                for(let i=0; i<self.list.length; i++){
+                    if(self.list[i].NUM == num){
+                        self.list.splice(i,1);
+                    }
+                }
+            }
+        }, // methods
+        mounted() {
+            // 처음 시작할 때 실행되는 부분
         }
-        let guestContainer = document.querySelector("#guestContainer");
-        let guestBox = e.target.closest(".guestBox");
-        guestContainer.removeChild(guestBox);
-        
-    }
+    });
+
+    app.mount('#app');
 
 </script>
 

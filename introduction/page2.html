@@ -3,118 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ABOUT ME</title>
+    <title>CASUAL</title>
+    <link rel="stylesheet" href="styles.css">
     <style>
-        *{
-            margin: 0px;
-            padding: 0px;
-            color : #333;
-            font-weight: 300px;
-            font-family: 'Roboto';
-            box-sizing: border-box;
-        }
-        html {
-            overflow-y: scroll;
-        }
-        a {text-decoration: none;}
-        .btn {
-            border: none;
-            text-indent: -9999px;
-            cursor: pointer;
-            overflow: hidden;
-            white-space: nowrap;
-            width: 32px;
-            height: 32px;
-            float: left;
-            background-size: cover;
-            background-color: #E3F6D9;
-            border: none;
-        }
-        #container{
-            width: 980px;
-            height: auto;
-            margin: 100px auto;
-            overflow: visible;
-            padding-bottom: 50px;
-        }
-        #container::after{
-            content: "";
-            display: block;
-            clear: both;
-        }
-        nav { 
-            width:6%; 
-            /* 나머지 94퍼 */
-            float: left;
-        }
-        nav ul a{
-            display: inline-block;
-            width: 64px;
-            height: 272px;
-            position:relative;
-            left:-3px;
-            list-style: none;
-        }
-        nav ul a li{
-            height: 70%;
-            font-size: 26px;
-            writing-mode: vertical-rl;
-            transform: rotate(180deg);
-            line-height: 64px;
-            padding: 32px 0;
-            float:left;
-            text-align: right;
-            box-sizing: border-box;
-        }
-        nav ul a:last-child li{
-            padding: 16px 0;
-        }
-        nav ul a img{
-            float:left;
-            margin: 0 16px;
-            width: 36px;
-            background-image: url(./Star\ border.png);
-            border: none;
-            background-size: cover;
-        }
-        nav ul::after{
-            content: "";
-            display: block;
-            clear: both;
-        }
         nav ul a:first-child{
-            background-image: url(./menu1.png);
             z-index: 1;
         }
         nav ul a:nth-child(2){
-            background-image: url(./menu2.png);
-            top: -30px;
             z-index: 100;
         }
         nav ul a:last-child{
-            background-image: url(./menu3.png);
-            top: -60px;
             z-index: 1;
         }
         #page {
-            width: 94%;
-            height: auto;
-            float: left;
-            box-sizing: border-box;
             padding: 30px;
             background-color: #FDEAC5;
-            border: 1px solid #333;
-            box-shadow: 20px 20px 0px #DFDFDF;
-            z-index: 50;
-            position: relative;
 
         }  
         
-        h1{
-            font-size: 64px;
-            text-align: right;
-            margin-bottom: 12px;
-        }
         #main{
             background-color: white;
             height: auto;
@@ -143,15 +49,23 @@
             background-size: 100%;
             background-position: center;
         }
-        mark {
-            background-color:lemonchiffon;
-            font-weight: 400;
+        .personalityStyle{
+            width: 570px;
+            background-color: lemonchiffon;
+        }
+        .personalityStyle2 {
+            width: 80px; 
+            background-color: #E3F6D9;
         }
 
         #favorite{
             padding: 0px;
             background-size: cover;
             background-position: center;
+        }
+        .favoriteStyle{
+            background-color:#DBEDF1;
+            width: 280px; 
         }
         .fMenu span{
             font-weight: 600;
@@ -160,9 +74,7 @@
             background-color: #FDEAC5;
             cursor: pointer;
         }
-        .addEx{
-            font-size: 16px;
-        }
+
         /* 서로 다른 tr에 있음. 형제 선택자 ~가 있긴 하지만 */
         /* favorite이 drama, movie menu보다 먼저 나오므로  */
         /* ~로 선택 못함. 따라서 has()를 이용하면 가능 */
@@ -186,6 +98,10 @@
             text-indent: -9999px;
         }
         
+        .hobbiesStyle{
+            background-color: #DBEDF1;
+        }
+        
         /* 선 겹쳐서 두꺼워지는 거 방지 */
         table:not(#main section:last-child){
             margin-bottom: -1px;
@@ -197,6 +113,9 @@
         /* photoSection */
         section:last-child #photoArea{
             height: 200px;
+        }
+        .photoStyle {
+            background-color: lemonchiffon;
         }
         .photoBox {
             width: 30%;
@@ -265,13 +184,13 @@
                     <section>
                         <table>
                             <tr>
-                                <th style="width: 268px;">PERSONALITY</th>
-                                <td style="background-color: lemonchiffon;"></td>
+                                <th>PERSONALITY</th>
+                                <td class="personalityStyle"></td>
                             </tr>
                         </table>
                         <table>
                             <tr>
-                                <td style="width: 80px; background-color: #E3F6D9;"></td>
+                                <td class="personalityStyle2"></td>
                                 <td id="personality">
                                     <p>무슨 말로 설명을 해야할지 잘 모르겠음...<br> 
                                     MBTI가 INTP이 나오긴 했음...그치만 테스트할 때마다
@@ -290,7 +209,7 @@
                             <tr>
                                 <td>MANGA</td>
                                 <td id="mangaMenu" class="fMenu" >헌터X헌터 <span>></span></td>
-                                <td id="favorite" colspan="2" rowspan="4" style="background-color:#DBEDF1; width: 280px;">
+                                <td id="favorite" colspan="2" rowspan="4" class="favoriteStyle">
                                     <span class="addEx">※ 왼쪽 메뉴 호버 시 이미지 표시</span>
                                 </td>
                             </tr>
@@ -313,7 +232,7 @@
                     <section>
                         <table>
                             <tr>
-                                <td colspan="5" style="background-color: #DBEDF1;"></td>
+                                <td colspan="5" class="hobbiesStyle"></td>
                             </tr>
                             <tr>
                                 <th colspan="5">
@@ -334,7 +253,7 @@
                     <section>
                         <table>
                             <tr>
-                                <td style="background-color: lemonchiffon;"></td>
+                                <td class="photoStyle"></td>
                                 <th style="width: 340px">찍은 풍경사진들</th>
                             </tr>
                             <tr id="photoArea">
