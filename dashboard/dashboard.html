@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DADA 강사 대시보드</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter & Noto Sans KR -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        emerald: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            200: '#a7f3d0',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                            950: '#022c22'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f4f7f5;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #a7f3d0;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #059669;
+        }
+    </style>
+</head>
+<body class="bg-emerald-50/30 text-gray-800 antialiased flex h-screen overflow-hidden">
+
+    <!-- 사이드바 Navigation -->
+    <aside id="sidebar" class="w-64 bg-emerald-900 text-white flex flex-col transition-all duration-300 z-30 absolute md:relative h-full -translate-x-full md:translate-x-0">
+        <!-- 로고 영역 -->
+        <div class="p-6 border-b border-emerald-800 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-9 h-9 rounded-xl bg-emerald-500 flex items-center justify-center font-bold text-xl text-white shadow-md">
+                    D
+                </div>
+                <div>
+                    <h1 class="font-bold text-xl tracking-wider text-white">DADA</h1>
+                    <p class="text-xs text-emerald-300">강사 스튜디오 센터</p>
+                </div>
+            </div>
+            <button id="closeSidebarBtn" class="md:hidden text-emerald-300 hover:text-white">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+
+        <!-- 메뉴 목록 -->
+        <nav class="flex-1 p-4 space-y-1.5 overflow-y-auto custom-scrollbar">
+            <a href="#" onclick="switchTab('home')" id="nav-home" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-xl bg-emerald-800 text-emerald-100 font-medium transition">
+                <i class="fa-solid fa-chart-pie w-5 text-emerald-400"></i>
+                <span>대시보드 홈</span>
+            </a>
+            <a href="#" onclick="switchTab('classes')" id="nav-classes" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-xl text-emerald-200 hover:bg-emerald-800/60 hover:text-white font-medium transition">
+                <i class="fa-solid fa-palette w-5 text-emerald-400"></i>
+                <span>클래스/강좌 관리</span>
+            </a>
+            <a href="#" onclick="switchTab('community')" id="nav-community" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-xl text-emerald-200 hover:bg-emerald-800/60 hover:text-white font-medium transition">
+                <i class="fa-solid fa-users w-5 text-emerald-400"></i>
+                <span>소모임/커뮤니티</span>
+            </a>
+            <a href="#" onclick="switchTab('reservations')" id="nav-reservations" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-xl text-emerald-200 hover:bg-emerald-800/60 hover:text-white font-medium transition">
+                <i class="fa-solid fa-calendar-check w-5 text-emerald-400"></i>
+                <span>예약/수강생 관리</span>
+            </a>
+            <a href="#" onclick="switchTab('settlement')" id="nav-settlement" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-xl text-emerald-200 hover:bg-emerald-800/60 hover:text-white font-medium transition">
+                <i class="fa-solid fa-wallet w-5 text-emerald-400"></i>
+                <span>정산 및 매출 내역</span>
+            </a>
+            <a href="#" onclick="switchTab('profile')" id="nav-profile" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-xl text-emerald-200 hover:bg-emerald-800/60 hover:text-white font-medium transition">
+                <i class="fa-solid fa-sliders w-5 text-emerald-400"></i>
+                <span>프로필 및 알림 설정</span>
+            </a>
+        </nav>
+
+        <!-- 프로필 하단 미니 카드 -->
+        <div class="p-4 border-t border-emerald-800">
+            <div class="bg-emerald-800/50 p-3 rounded-xl flex items-center space-x-3">
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="프로필" class="w-10 h-10 rounded-full object-cover border-2 border-emerald-400">
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-semibold text-white truncate">김다다 강사</p>
+                    <p class="text-xs text-emerald-300 truncate">유체화/원데이 전담</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- 메인 콘텐츠 영역 -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+        
+        <!-- 상단 헤더 Top Bar -->
+        <header class="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-4 md:px-8 z-10 shadow-sm">
+            <div class="flex items-center space-x-4">
+                <button id="openSidebarBtn" class="md:hidden text-gray-600 hover:text-emerald-700">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+                <div class="hidden sm:block">
+                    <h2 class="text-lg font-bold text-gray-800">김다다 강사님, 반갑습니다! 🎨</h2>
+                    <p class="text-xs text-gray-500">오늘도 수강생들과 즐거운 수업을 시작해 보세요.</p>
+                </div>
+            </div>
+
+            <!-- 검색 및 우측 상태 조작 버튼 -->
+            <div class="flex items-center space-x-3 sm:space-x-5">
+                <!-- 검색창 -->
+                <div class="relative hidden lg:block w-64">
+                    <input type="text" placeholder="클래스, 수강생 검색..." class="w-full pl-9 pr-4 py-1.5 text-sm bg-gray-100 rounded-full border border-transparent focus:border-emerald-500 focus:bg-white focus:outline-none transition">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-gray-400 text-xs"></i>
+                </div>
+
+                <!-- 상태 변경 셀렉트 -->
+                <div class="flex items-center space-x-2 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-200">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" id="statusIndicator"></span>
+                    <select id="instructorStatus" onchange="toggleStatus(this.value)" class="bg-transparent text-xs font-semibold text-emerald-800 focus:outline-none cursor-pointer">
+                        <option value="available">수업 가능</option>
+                        <option value="busy">수업 진행 중</option>
+                        <option value="off">휴무/외출 중</option>
+                    </select>
+                </div>
+
+                <!-- 신규 클래스 개설 버튼 -->
+                <button onclick="openModal('addClassModal')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 rounded-lg text-sm font-medium flex items-center space-x-1.5 shadow-sm transition">
+                    <i class="fa-solid fa-plus text-xs"></i>
+                    <span class="hidden sm:inline">새 클래스</span>
+                </button>
+
+                <!-- 알림 아이콘 -->
+                <div class="relative cursor-pointer hover:text-emerald-700 transition">
+                    <i class="fa-regular fa-bell text-gray-600 text-lg"></i>
+                    <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white rounded-full text-[10px] font-bold flex items-center justify-center">3</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- 메인 콘텐츠 스크롤 뷰 -->
+        <main class="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar">
+            
+            <!-- 탭 1: 대시보드 홈 -->
+            <div id="tab-home" class="tab-content space-y-6">
+                
+                <!-- 요약 카드리스트 (Stat Cards) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                    <!-- 이번 달 총 정산 예정 금액 -->
+                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-xs font-medium text-gray-500 mb-1">이번 달 정산 예정금</p>
+                                <h3 class="text-2xl font-bold text-gray-800">3,420,000원</h3>
+                            </div>
+                            <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                                <i class="fa-solid fa-coins text-lg"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-center text-xs text-emerald-600">
+                            <i class="fa-solid fa-arrow-trend-up mr-1"></i>
+                            <span>지난달 대비 14.2% 증가</span>
+                        </div>
+                    </div>
+
+                    <!-- 진행 중인 클래스 수 -->
+                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-xs font-medium text-gray-500 mb-1">운영 클래스</p>
+                                <h3 class="text-2xl font-bold text-gray-800">8개 강좌</h3>
+                            </div>
+                            <div class="w-10 h-10 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center">
+                                <i class="fa-solid fa-layer-group text-lg"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-center text-xs text-gray-500">
+                            <span>원데이 5개 / 정규 3개</span>
+                        </div>
+                    </div>
+
+                    <!-- 누적 수강생 수 -->
+                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-xs font-medium text-gray-500 mb-1">누적 수강생</p>
+                                <h3 class="text-2xl font-bold text-gray-800">1,248명</h3>
+                            </div>
+                            <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center">
+                                <i class="fa-solid fa-user-graduate text-lg"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-center text-xs text-emerald-600">
+                            <i class="fa-solid fa-user-plus mr-1"></i>
+                            <span>이번 주 28명 신규 등록</span>
+                        </div>
+                    </div>
+
+                    <!-- 평균 만족도 평점 -->
+                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-xs font-medium text-gray-500 mb-1">평균 수강 평점</p>
+                                <h3 class="text-2xl font-bold text-gray-800">4.95 / 5.0</h3>
+                            </div>
+                            <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center">
+                                <i class="fa-solid fa-star text-lg"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-center text-xs text-amber-600">
+                            <i class="fa-solid fa-heart mr-1"></i>
+                            <span>리뷰 312개 작성됨</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 중앙 섹션 1: 차트 및 오늘 일정 -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- 매출 및 수강생 동향 그래프 (2 columns) -->
+                    <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+                        <div class="flex justify-between items-center mb-4">
+                            <div>
+                                <h3 class="text-base font-bold text-gray-800">월별 매출 및 수강생 동향</h3>
+                                <p class="text-xs text-gray-500">최근 6개월간의 클래스 수입과 수강 인원 변화입니다.</p>
+                            </div>
+                            <span class="text-xs bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-md font-semibold border border-emerald-200">2026 하반기</span>
+                        </div>
+                        <div class="relative w-full h-64">
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- 오늘/이번 주 수업 일정 -->
+                    <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-base font-bold text-gray-800">오늘의 수업 일정</h3>
+                            <span class="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">3건 예정</span>
+                        </div>
+                        <div class="space-y-3.5 flex-1 overflow-y-auto pr-1 custom-scrollbar max-h-72">
+                            <!-- 일정 1 -->
+                            <div class="p-3.5 bg-emerald-50/50 rounded-xl border-l-4 border-emerald-600 hover:bg-emerald-50 transition">
+                                <div class="flex justify-between items-start">
+                                    <span class="text-xs font-semibold text-emerald-800 bg-emerald-200/60 px-2 py-0.5 rounded">원데이</span>
+                                    <span class="text-xs text-gray-500"><i class="fa-regular fa-clock mr-1"></i>14:00 - 16:00</span>
+                                </div>
+                                <h4 class="font-bold text-sm text-gray-800 mt-2">아크릴 나이프 페인팅 클래스</h4>
+                                <p class="text-xs text-gray-500 mt-1"><i class="fa-solid fa-location-dot mr-1 text-emerald-600"></i>홍대 1스튜디오</p>
+                                <div class="mt-3 flex justify-between items-center text-xs">
+                                    <span class="text-gray-600">예약 인원</span>
+                                    <span class="font-bold text-emerald-700">8 / 8명 (정원마감)</span>
+                                </div>
+                            </div>
+
+                            <!-- 일정 2 -->
+                            <div class="p-3.5 bg-gray-50 rounded-xl border-l-4 border-teal-500 hover:bg-gray-100 transition">
+                                <div class="flex justify-between items-start">
+                                    <span class="text-xs font-semibold text-teal-800 bg-teal-200/60 px-2 py-0.5 rounded">정규반</span>
+                                    <span class="text-xs text-gray-500"><i class="fa-regular fa-clock mr-1"></i>17:00 - 19:00</span>
+                                </div>
+                                <h4 class="font-bold text-sm text-gray-800 mt-2">감성 유화 드로잉 기초 3기</h4>
+                                <p class="text-xs text-gray-500 mt-1"><i class="fa-solid fa-location-dot mr-1 text-teal-600"></i>강남 메인 아틀리에</p>
+                                <div class="mt-3 flex justify-between items-center text-xs">
+                                    <span class="text-gray-600">예약 인원</span>
+                                    <span class="font-bold text-teal-700">5 / 6명</span>
+                                </div>
+                            </div>
+
+                            <!-- 일정 3 -->
+                            <div class="p-3.5 bg-gray-50 rounded-xl border-l-4 border-emerald-400 hover:bg-gray-100 transition">
+                                <div class="flex justify-between items-start">
+                                    <span class="text-xs font-semibold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">원데이</span>
+                                    <span class="text-xs text-gray-500"><i class="fa-regular fa-clock mr-1"></i>19:30 - 21:00</span>
+                                </div>
+                                <h4 class="font-bold text-sm text-gray-800 mt-2">오일 파스텔 풍경화 밤샘 반</h4>
+                                <p class="text-xs text-gray-500 mt-1"><i class="fa-solid fa-location-dot mr-1 text-emerald-600"></i>온라인 라이브 룸</p>
+                                <div class="mt-3 flex justify-between items-center text-xs">
+                                    <span class="text-gray-600">예약 인원</span>
+                                    <span class="font-bold text-emerald-700">12 / 15명</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 하단 섹션 2: 예약 현황 & 소모임 현황 -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    
+                    <!-- 최근 수강 신청 목록 (2 columns) -->
+                    <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                        <div class="flex justify-between items-center mb-4">
+                            <div>
+                                <h3 class="text-base font-bold text-gray-800">실시간 수강 신청 내역</h3>
+                                <p class="text-xs text-gray-500">최근 대기 등록된 수강생 목록입니다. 승인 여부를 선택해 주세요.</p>
+                            </div>
+                            <button onclick="switchTab('reservations')" class="text-xs text-emerald-600 hover:underline font-semibold">전체보기 <i class="fa-solid fa-chevron-right text-[10px]"></i></button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs text-gray-600">
+                                <thead class="bg-gray-50 text-gray-700 uppercase border-y border-gray-100">
+                                    <tr>
+                                        <th class="py-3 px-3">수강생명</th>
+                                        <th class="py-3 px-3">신청 클래스</th>
+                                        <th class="py-3 px-3">신청 일시</th>
+                                        <th class="py-3 px-3">결제 금액</th>
+                                        <th class="py-3 px-3">상태</th>
+                                        <th class="py-3 px-3 text-center">승인/거절</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="bookingTableBody" class="divide-y divide-gray-100">
+                                    <!-- Row 1 -->
+                                    <tr class="hover:bg-emerald-50/30 transition">
+                                        <td class="py-3 px-3 font-semibold text-gray-800">
+                                            <div class="flex items-center space-x-2">
+                                                <span class="w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs">이지</span>
+                                                <span>이지은</span>
+                                            </div>
+                                        </td>
+                                        <td class="py-3 px-3 text-gray-700">나이프 페인팅 원데이</td>
+                                        <td class="py-3 px-3 text-gray-400">10분 전</td>
+                                        <td class="py-3 px-3 font-medium text-gray-800">45,000원</td>
+                                        <td class="py-3 px-3">
+                                            <span class="status-badge px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-100 text-amber-700">승인 대기</span>
+                                        </td>
+                                        <td class="py-3 px-3 text-center space-x-1">
+                                            <button onclick="updateBookingStatus(this, 'approved')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2 py-1 rounded text-[11px] transition">승인</button>
+                                            <button onclick="updateBookingStatus(this, 'rejected')" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-2 py-1 rounded text-[11px] transition">거절</button>
+                                        </td>
+                                    </tr>
+                                    <!-- Row 2 -->
+                                    <tr class="hover:bg-emerald-50/30 transition">
+                                        <td class="py-3 px-3 font-semibold text-gray-800">
+                                            <div class="flex items-center space-x-2">
+                                                <span class="w-7 h-7 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xs">박민</span>
+                                                <span>박민수</span>
+                                            </div>
+                                        </td>
+                                        <td class="py-3 px-3 text-gray-700">오일 파스텔 밤샘 반</td>
+                                        <td class="py-3 px-3 text-gray-400">1시간 전</td>
+                                        <td class="py-3 px-3 font-medium text-gray-800">38,000원</td>
+                                        <td class="py-3 px-3">
+                                            <span class="status-badge px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-700">결제 완료</span>
+                                        </td>
+                                        <td class="py-3 px-3 text-center space-x-1">
+                                            <button onclick="updateBookingStatus(this, 'approved')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2 py-1 rounded text-[11px] transition">승인</button>
+                                            <button onclick="updateBookingStatus(this, 'rejected')" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-2 py-1 rounded text-[11px] transition">거절</button>
+                                        </td>
+                                    </tr>
+                                    <!-- Row 3 -->
+                                    <tr class="hover:bg-emerald-50/30 transition">
+                                        <td class="py-3 px-3 font-semibold text-gray-800">
+                                            <div class="flex items-center space-x-2">
+                                                <span class="w-7 h-7 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-xs">최윤</span>
+                                                <span>최윤아</span>
+                                            </div>
+                                        </td>
+                                        <td class="py-3 px-3 text-gray-700">유화 드로잉 기초 3기</td>
+                                        <td class="py-3 px-3 text-gray-400">3시간 전</td>
+                                        <td class="py-3 px-3 font-medium text-gray-800">180,000원</td>
+                                        <td class="py-3 px-3">
+                                            <span class="status-badge px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-100 text-amber-700">승인 대기</span>
+                                        </td>
+                                        <td class="py-3 px-3 text-center space-x-1">
+                                            <button onclick="updateBookingStatus(this, 'approved')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2 py-1 rounded text-[11px] transition">승인</button>
+                                            <button onclick="updateBookingStatus(this, 'rejected')" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-2 py-1 rounded text-[11px] transition">거절</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 소모임 / 커뮤니티 현황 -->
+                    <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-base font-bold text-gray-800">운영 중인 소모임</h3>
+                                <span class="text-xs bg-emerald-100 text-emerald-800 font-bold px-2.5 py-0.5 rounded-full">2개 그룹</span>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <!-- 카드 1 -->
+                                <div class="p-4 bg-emerald-50/40 rounded-xl border border-emerald-100">
+                                    <div class="flex justify-between items-start">
+                                        <h4 class="font-bold text-sm text-gray-800">주말 그림 다락방 🎨</h4>
+                                        <span class="text-[11px] text-gray-500">회원 48명</span>
+                                    </div>
+                                    <p class="text-xs text-gray-600 mt-1 line-clamp-1">주말마다 자유작품 공유하고 피드백 주고받는 모임</p>
+                                    <div class="mt-3 flex items-center justify-between text-xs pt-2 border-t border-emerald-100/60">
+                                        <span class="text-amber-600 font-medium"><i class="fa-solid fa-comment-dots mr-1"></i>답변 미완료 3건</span>
+                                        <button onclick="switchTab('community')" class="text-emerald-700 font-semibold hover:underline">바로가기</button>
+                                    </div>
+                                </div>
+
+                                <!-- 카드 2 -->
+                                <div class="p-4 bg-gray-50 rounded-xl border border-gray-100">
+                                    <div class="flex justify-between items-start">
+                                        <h4 class="font-bold text-sm text-gray-800">전시회 함께 갈 사람 🖼️</h4>
+                                        <span class="text-[11px] text-gray-500">회원 112명</span>
+                                    </div>
+                                    <p class="text-xs text-gray-600 mt-1 line-clamp-1">월 1회 서울 시내 갤러리 도슨트 투어 크루</p>
+                                    <div class="mt-3 flex items-center justify-between text-xs pt-2 border-t border-gray-200/60">
+                                        <span class="text-gray-500 font-medium"><i class="fa-solid fa-check mr-1"></i>모든 질문 답변 완료</span>
+                                        <button onclick="switchTab('community')" class="text-emerald-700 font-semibold hover:underline">바로가기</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 소모임 새 게시글 바로가기 -->
+                        <div class="mt-4 pt-3 border-t border-gray-100 text-center">
+                            <button onclick="switchTab('community')" class="w-full py-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg text-xs font-semibold transition">
+                                소모임 커뮤니티 관리 바로가기
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- 탭 2: 클래스/강좌 관리 -->
+            <div id="tab-classes" class="tab-content hidden space-y-6">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800">클래스 및 강좌 관리</h3>
+                        <p class="text-xs text-gray-500">현재 개설된 원데이클래스 및 정규 강좌를 관리합니다.</p>
+                    </div>
+                    <button onclick="openModal('addClassModal')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center space-x-2">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>신규 클래스 등록</span>
+                    </button>
+                </div>
+
+                <!-- 클래스 카드 리스트 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- 클래스 1 -->
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col justify-between">
+                        <div>
+                            <div class="relative h-40 bg-gray-200">
+                                <img src="https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=500&auto=format&fit=crop&q=80" alt="클래스 1" class="w-full h-full object-cover">
+                                <span class="absolute top-3 left-3 bg-emerald-600 text-white text-xs px-2.5 py-1 rounded-full font-semibold">원데이</span>
+                                <span class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-gray-800 text-xs px-2 py-0.5 rounded font-bold">45,000원</span>
+                            </div>
+                            <div class="p-5">
+                                <h4 class="font-bold text-base text-gray-800">아크릴 나이프 페인팅 클래스</h4>
+                                <p class="text-xs text-gray-500 mt-1 line-clamp-2">입체감 있는 질감을 캔버스에 표현해 보는 힐링 미술 수업입니다.</p>
+                                <div class="mt-4 space-y-1.5 text-xs text-gray-600">
+                                    <div class="flex items-center justify-between">
+                                        <span><i class="fa-solid fa-calendar mr-1.5 text-emerald-600"></i>매주 토/일 진행</span>
+                                        <span class="font-medium text-emerald-700">모집률 100%</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span><i class="fa-solid fa-location-dot mr-1.5 text-emerald-600"></i>홍대 1스튜디오</span>
+                                        <span>정원 8명</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between text-xs">
+                            <span class="text-emerald-700 font-semibold">상태: 모집 중</span>
+                            <div class="space-x-2">
+                                <button class="px-2.5 py-1 text-gray-600 hover:bg-gray-200 rounded">수정</button>
+                                <button class="px-2.5 py-1 text-red-600 hover:bg-red-50 rounded">마감</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 클래스 2 -->
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col justify-between">
+                        <div>
+                            <div class="relative h-40 bg-gray-200">
+                                <img src="https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=500&auto=format&fit=crop&q=80" alt="클래스 2" class="w-full h-full object-cover">
+                                <span class="absolute top-3 left-3 bg-teal-600 text-white text-xs px-2.5 py-1 rounded-full font-semibold">정규 4주</span>
+                                <span class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-gray-800 text-xs px-2 py-0.5 rounded font-bold">180,000원</span>
+                            </div>
+                            <div class="p-5">
+                                <h4 class="font-bold text-base text-gray-800">감성 유화 드로잉 기초 3기</h4>
+                                <p class="text-xs text-gray-500 mt-1 line-clamp-2">초보자도 쉽게 배울 수 있는 유화의 기초 조색 기법과 완성작 제작.</p>
+                                <div class="mt-4 space-y-1.5 text-xs text-gray-600">
+                                    <div class="flex items-center justify-between">
+                                        <span><i class="fa-solid fa-calendar mr-1.5 text-teal-600"></i>수요일 저녁 7시</span>
+                                        <span class="font-medium text-teal-700">모집률 83%</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span><i class="fa-solid fa-location-dot mr-1.5 text-teal-600"></i>강남 메인 아틀리에</span>
+                                        <span>정원 6명</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between text-xs">
+                            <span class="text-teal-700 font-semibold">상태: 진행 중</span>
+                            <div class="space-x-2">
+                                <button class="px-2.5 py-1 text-gray-600 hover:bg-gray-200 rounded">수정</button>
+                                <button class="px-2.5 py-1 text-red-600 hover:bg-red-50 rounded">마감</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 클래스 3 -->
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col justify-between">
+                        <div>
+                            <div class="relative h-40 bg-gray-200">
+                                <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?w=500&auto=format&fit=crop&q=80" alt="클래스 3" class="w-full h-full object-cover">
+                                <span class="absolute top-3 left-3 bg-emerald-600 text-white text-xs px-2.5 py-1 rounded-full font-semibold">원데이</span>
+                                <span class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-gray-800 text-xs px-2 py-0.5 rounded font-bold">38,000원</span>
+                            </div>
+                            <div class="p-5">
+                                <h4 class="font-bold text-base text-gray-800">오일 파스텔 풍경화 밤샘 반</h4>
+                                <p class="text-xs text-gray-500 mt-1 line-clamp-2">부드러운 질감의 오일파스텔로 간편하게 완성하는 나만의 풍경화.</p>
+                                <div class="mt-4 space-y-1.5 text-xs text-gray-600">
+                                    <div class="flex items-center justify-between">
+                                        <span><i class="fa-solid fa-calendar mr-1.5 text-emerald-600"></i>금요일 밤 7시 반</span>
+                                        <span class="font-medium text-emerald-700">모집률 80%</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span><i class="fa-solid fa-location-dot mr-1.5 text-emerald-600"></i>온라인 라이브 룸</span>
+                                        <span>정원 15명</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between text-xs">
+                            <span class="text-emerald-700 font-semibold">상태: 모집 중</span>
+                            <div class="space-x-2">
+                                <button class="px-2.5 py-1 text-gray-600 hover:bg-gray-200 rounded">수정</button>
+                                <button class="px-2.5 py-1 text-red-600 hover:bg-red-50 rounded">마감</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 탭 3: 소모임/커뮤니티 관리 -->
+            <div id="tab-community" class="tab-content hidden space-y-6">
+                <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">강사 주도 소모임 게시판 관리</h3>
+                    <p class="text-xs text-gray-500 mb-6">수강생들과 지속적인 소통을 나누고 질문에 피드백을 남겨보세요.</p>
+                    
+                    <div class="space-y-4">
+                        <!-- 질문 1 -->
+                        <div class="p-4 bg-gray-50 rounded-xl border border-gray-200/80">
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-center space-x-2">
+                                    <span class="bg-amber-100 text-amber-800 text-xs px-2 py-0.5 rounded font-bold">답변대기</span>
+                                    <span class="text-xs text-gray-500">주말 그림 다락방 소모임</span>
+                                </div>
+                                <span class="text-xs text-gray-400">2026.11.10 14:20</span>
+                            </div>
+                            <h4 class="font-bold text-sm text-gray-800 mt-2">나이프 페인팅할 때 보조제 비율을 어떻게 맞춰야 굳지 않나요?</h4>
+                            <p class="text-xs text-gray-600 mt-1">지난번 수업 들었던 김수현입니다! 혼자 연습해 보는데 젤 메디움을 너무 많이 섞어서 그런지 겉만 말라요 ㅠㅠ</p>
+                            <div class="mt-3 flex items-center space-x-2">
+                                <input type="text" placeholder="강사 답글을 작성하세요..." class="flex-1 text-xs border border-gray-300 rounded-lg px-3 py-1.5 focus:outline-none focus:border-emerald-600">
+                                <button class="bg-emerald-600 text-white text-xs px-3 py-1.5 rounded-lg font-medium hover:bg-emerald-700">등록</button>
+                            </div>
+                        </div>
+
+                        <!-- 질문 2 -->
+                        <div class="p-4 bg-gray-50 rounded-xl border border-gray-200/80">
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-center space-x-2">
+                                    <span class="bg-emerald-100 text-emerald-800 text-xs px-2 py-0.5 rounded font-bold">답변완료</span>
+                                    <span class="text-xs text-gray-500">전시회 함께 갈 사람 모임</span>
+                                </div>
+                                <span class="text-xs text-gray-400">2026.11.09 18:05</span>
+                            </div>
+                            <h4 class="font-bold text-sm text-gray-800 mt-2">다음 주 국립현대미술관 도슨트 신청 준비물 있나요?</h4>
+                            <div class="mt-2 p-3 bg-white rounded-lg border border-emerald-100 text-xs text-emerald-900">
+                                <span class="font-bold text-emerald-700 block mb-1">김다다 강사님의 답변:</span>
+                                별도의 준비물은 없으며, 편한 신발과 갤러리 에티켓만 챙겨와 주시면 됩니다! 장소는 로비 입구입니다.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 탭 4: 예약/수강생 관리 -->
+            <div id="tab-reservations" class="tab-content hidden space-y-6">
+                <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">전체 수강생 및 예약 관리</h3>
+                    <p class="text-xs text-gray-500 mb-4">모든 클래스 신청 수강생 목록 및 출석 상태를 관리합니다.</p>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs text-gray-600">
+                            <thead class="bg-gray-100 text-gray-700 uppercase">
+                                <tr>
+                                    <th class="py-3 px-3">수강생명</th>
+                                    <th class="py-3 px-3">연락처</th>
+                                    <th class="py-3 px-3">신청 강좌</th>
+                                    <th class="py-3 px-3">결제 상태</th>
+                                    <th class="py-3 px-3">상세</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                <tr>
+                                    <td class="py-3 px-3 font-semibold text-gray-800">이지은</td>
+                                    <td class="py-3 px-3">010-1234-5678</td>
+                                    <td class="py-3 px-3">나이프 페인팅 원데이</td>
+                                    <td class="py-3 px-3 text-amber-600 font-bold">승인대기</td>
+                                    <td class="py-3 px-3">
+                                        <button onclick="openModal('studentDetailModal')" class="text-emerald-700 hover:underline">상세보기</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="py-3 px-3 font-semibold text-gray-800">박민수</td>
+                                    <td class="py-3 px-3">010-9876-5432</td>
+                                    <td class="py-3 px-3">오일 파스텔 밤샘 반</td>
+                                    <td class="py-3 px-3 text-emerald-600 font-bold">결제완료</td>
+                                    <td class="py-3 px-3">
+                                        <button onclick="openModal('studentDetailModal')" class="text-emerald-700 hover:underline">상세보기</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 탭 5: 정산 및 매출 내역 -->
+            <div id="tab-settlement" class="tab-content hidden space-y-6">
+                <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">정산 및 매출 관리</h3>
+                    <p class="text-xs text-gray-500 mb-4">매월 수수료를 제외한 최종 입금 예정 정산액입니다.</p>
+                    <div class="p-4 bg-emerald-50 rounded-xl border border-emerald-200">
+                        <span class="text-xs text-emerald-800 font-medium">이번 달 예상 정산액 (수수료 10% 차감 후)</span>
+                        <h2 class="text-3xl font-extrabold text-emerald-900 mt-1">3,078,000 원</h2>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 탭 6: 프로필 및 알림 설정 -->
+            <div id="tab-profile" class="tab-content hidden space-y-6">
+                <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm max-w-2xl">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">강사 프로필 관리</h3>
+                    <div class="space-y-4 text-xs">
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-1">강사명</label>
+                            <input type="text" value="김다다" class="w-full border border-gray-300 rounded-lg p-2.5">
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-1">한 줄 소개</label>
+                            <input type="text" value="일상의 색채를 채우는 유체화 & 드로잉 전문 강사" class="w-full border border-gray-300 rounded-lg p-2.5">
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-1">대표 이력</label>
+                            <textarea class="w-full border border-gray-300 rounded-lg p-2.5 h-20">홍익대학교 서양화과 졸업&#10;전시 3회 진행 및 원데이 클래스 누적 수강생 1,000명 이상</textarea>
+                        </div>
+                        <button class="bg-emerald-600 text-white font-medium px-4 py-2 rounded-lg hover:bg-emerald-700 transition">변경사항 저장</button>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- 모달 1: 신규 클래스 등록 -->
+    <div id="addClassModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-xl space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-bold text-lg text-gray-800">새 클래스 개설</h3>
+                <button onclick="closeModal('addClassModal')" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form class="space-y-3 text-xs" onsubmit="event.preventDefault(); closeModal('addClassModal'); alert('신규 클래스가 성공적으로 등록되었습니다.');">
+                <div>
+                    <label class="block font-semibold text-gray-700 mb-1">클래스 이름</label>
+                    <input type="text" placeholder="예: 주말 수채화 원데이" class="w-full border border-gray-300 rounded-lg p-2 focus:border-emerald-500 focus:outline-none" required>
+                </div>
+                <div>
+                    <label class="block font-semibold text-gray-700 mb-1">클래스 유형</label>
+                    <select class="w-full border border-gray-300 rounded-lg p-2 focus:border-emerald-500 focus:outline-none">
+                        <option>원데이 클래스</option>
+                        <option>정규 학원 강좌 (주간/월간)</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block font-semibold text-gray-700 mb-1">수강료 (원)</label>
+                        <input type="number" placeholder="50000" class="w-full border border-gray-300 rounded-lg p-2 focus:border-emerald-500 focus:outline-none" required>
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-gray-700 mb-1">최대 정원 (명)</label>
+                        <input type="number" placeholder="8" class="w-full border border-gray-300 rounded-lg p-2 focus:border-emerald-500 focus:outline-none" required>
+                    </div>
+                </div>
+                <div>
+                    <label class="block font-semibold text-gray-700 mb-1">수업 장소</label>
+                    <input type="text" placeholder="홍대 1스튜디오 또는 온라인" class="w-full border border-gray-300 rounded-lg p-2 focus:border-emerald-500 focus:outline-none" required>
+                </div>
+                <div class="pt-3 flex space-x-2">
+                    <button type="button" onclick="closeModal('addClassModal')" class="w-1/2 py-2 border border-gray-300 rounded-lg font-medium text-gray-600 hover:bg-gray-50">취소</button>
+                    <button type="submit" class="w-1/2 py-2 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700">개설하기</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 모달 2: 수강생 상세 정보 모달 -->
+    <div id="studentDetailModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-xl space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-bold text-base text-gray-800">수강생 상세 정보</h3>
+                <button onclick="closeModal('studentDetailModal')" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="space-y-2 text-xs text-gray-600">
+                <p><span class="font-bold text-gray-800">이름:</span> 이지은</p>
+                <p><span class="font-bold text-gray-800">연락처:</span> 010-1234-5678</p>
+                <p><span class="font-bold text-gray-800">신청 강좌:</span> 아크릴 나이프 페인팅 클래스</p>
+                <p><span class="font-bold text-gray-800">요청사항:</span> 왼손잡이라 관련 도구가 추가로 필요합니다!</p>
+            </div>
+            <button onclick="closeModal('studentDetailModal')" class="w-full py-2 bg-emerald-600 text-white rounded-lg font-medium text-xs hover:bg-emerald-700">확인</button>
+        </div>
+    </div>
+
+    <script>
+        // 탭 전환 기능 (Single Page Application 느낌)
+        function switchTab(tabId) {
+            // 모든 탭 숨기기
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.add('hidden'));
+
+            // 선택된 탭 보이기
+            const selectedTab = document.getElementById('tab-' + tabId);
+            if (selectedTab) {
+                selectedTab.classList.remove('hidden');
+            }
+
+            // 사이드바 메뉴 스타일 업데이트
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.classList.remove('bg-emerald-800', 'text-emerald-100');
+                item.classList.add('text-emerald-200');
+            });
+
+            const activeNav = document.getElementById('nav-' + tabId);
+            if (activeNav) {
+                activeNav.classList.add('bg-emerald-800', 'text-emerald-100');
+                activeNav.classList.remove('text-emerald-200');
+            }
+
+            // 모바일일 경우 사이드바 닫기
+            if (window.innerWidth < 768) {
+                document.getElementById('sidebar').classList.add('-translate-x-full');
+            }
+        }
+
+        // 반응형 모바일 사이드바 토글
+        const sidebar = document.getElementById('sidebar');
+        document.getElementById('openSidebarBtn').addEventListener('click', () => {
+            sidebar.classList.remove('-translate-x-full');
+        });
+        document.getElementById('closeSidebarBtn').addEventListener('click', () => {
+            sidebar.classList.add('-translate-x-full');
+        });
+
+        // 강사 상태 변경 표시
+        function toggleStatus(val) {
+            const indicator = document.getElementById('statusIndicator');
+            if (val === 'available') {
+                indicator.className = 'w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse';
+            } else if (val === 'busy') {
+                indicator.className = 'w-2.5 h-2.5 rounded-full bg-amber-500';
+            } else {
+                indicator.className = 'w-2.5 h-2.5 rounded-full bg-gray-400';
+            }
+        }
+
+        // 수강생 예약 상태 동적 변경 (DOM 조작)
+        function updateBookingStatus(buttonElement, action) {
+            const row = buttonElement.closest('tr');
+            const statusBadge = row.querySelector('.status-badge');
+            const actionTd = row.querySelector('td:last-child');
+
+            if (action === 'approved') {
+                statusBadge.className = 'status-badge px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-800';
+                statusBadge.innerText = '승인 완료';
+                actionTd.innerHTML = '<span class="text-emerald-600 font-bold text-xs"><i class="fa-solid fa-check mr-1"></i>승인됨</span>';
+            } else if (action === 'rejected') {
+                statusBadge.className = 'status-badge px-2 py-0.5 rounded-full text-[11px] font-semibold bg-red-100 text-red-700';
+                statusBadge.innerText = '취소/거절';
+                actionTd.innerHTML = '<span class="text-red-500 font-bold text-xs"><i class="fa-solid fa-xmark mr-1"></i>거절됨</span>';
+            }
+        }
+
+        // 모달 열기 & 닫기
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        // Chart.js 초기화 (매출 및 수강생 동향 차트)
+        window.onload = function() {
+            const ctx = document.getElementById('revenueChart').getContext('2d');
+            
+            // 그린 톤 그라데이션 적용
+            const gradient = ctx.createLinearGradient(0, 0, 0, 250);
+            gradient.addColorStop(0, 'rgba(16, 185, 129, 0.35)');
+            gradient.addColorStop(1, 'rgba(16, 185, 129, 0.0)');
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['6월', '7월', '8월', '9월', '10월', '11월'],
+                    datasets: [
+                        {
+                            label: '월 매출 (만원)',
+                            data: [180, 220, 290, 250, 310, 342],
+                            borderColor: '#059669',
+                            backgroundColor: gradient,
+                            fill: true,
+                            tension: 0.35,
+                            borderWidth: 3,
+                            pointBackgroundColor: '#047857',
+                            pointRadius: 4,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: '수강생 수 (명)',
+                            data: [65, 80, 110, 95, 120, 140],
+                            borderColor: '#10b981',
+                            borderDash: [4, 4],
+                            fill: false,
+                            tension: 0.35,
+                            borderWidth: 2,
+                            pointBackgroundColor: '#10b981',
+                            pointRadius: 3,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                boxWidth: 12,
+                                font: { size: 11, family: 'Noto Sans KR' }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { size: 11 } }
+                        },
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            grid: { color: '#f3f4f6' },
+                            ticks: { font: { size: 10 } }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: false,
+                            position: 'right'
+                        }
+                    }
+                }
+            });
+        };
+    </script>
+</body>
+</html>
